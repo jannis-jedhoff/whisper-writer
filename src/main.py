@@ -16,7 +16,6 @@ from transcription import create_local_model
 from input_simulation import InputSimulator
 from utils import ConfigManager
 
-
 class WhisperWriterApp(QObject):
     def __init__(self):
         """
