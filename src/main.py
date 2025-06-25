@@ -152,6 +152,7 @@ class WhisperWriterApp(QObject):
             self.result_thread.statusSignal.connect(self.status_window.updateStatus)
             self.status_window.closeSignal.connect(self.stop_result_thread)
         self.result_thread.resultSignal.connect(self.on_transcription_complete)
+        self.result_thread.errorSignal.connect(self.show_error_message)
         self.result_thread.start()
 
     def stop_result_thread(self):
@@ -174,6 +175,10 @@ class WhisperWriterApp(QObject):
             self.start_result_thread()
         else:
             self.key_listener.start()
+
+    def show_error_message(self, message):
+        """Display an error message from the result thread."""
+        QMessageBox.critical(self.main_window, 'Recording Error', message)
 
     def run(self):
         """
