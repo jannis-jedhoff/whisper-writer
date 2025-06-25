@@ -14,23 +14,17 @@ from utils import ConfigManager
 
 
 class ResultThread(QThread):
-    """
-    A thread class for handling audio recording, transcription, and result processing.
+    """Thread for recording and transcribing audio."""
 
-    This class manages the entire process of:
-    1. Recording audio from the microphone
-    2. Detecting speech and silence
-    3. Saving the recorded audio as numpy array
-    4. Transcribing the audio
-    5. Emitting the transcription result
-
-    Signals:
-        statusSignal: Emits the current status of the thread (e.g., 'recording', 'transcribing', 'idle')
-        resultSignal: Emits the transcription result
-    """
-
+    # Emitted whenever the internal state changes.
     statusSignal = pyqtSignal(str)
+
+    # Emitted when a transcription result is available.
     resultSignal = pyqtSignal(str)
+
+    # Emitted when an exception occurs while processing audio. The signal carries
+    # a human readable error message so the UI can inform the user.
+    errorSignal = pyqtSignal(str)
 
     def __init__(self, local_model=None):
         """
@@ -100,6 +94,7 @@ class ResultThread(QThread):
         except Exception as e:
             traceback.print_exc()
             self.statusSignal.emit('error')
+            self.errorSignal.emit(str(e))
             self.resultSignal.emit('')
         finally:
             self.stop_recording()
